@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Boleto - Palenque Gómez Palacio</title>
+    <!-- Librería externa para generar el PDF con excelente calidad -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -31,10 +33,13 @@
             background: #fff;
             overflow: hidden;
         }
+        /* Optimización de calidad para que no se vea borroso */
         .ticket-img {
             width: 100%;
             height: auto;
             display: block;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
         }
         /* Zona Interactiva: Botón Wallet (Izquierda) */
         .wallet-overlay {
@@ -43,18 +48,37 @@
             bottom: 4%;
             width: 33%;
             height: 6%;
-            background: rgba(0, 0, 0, 0); /* Totalmente transparente */
+            background: rgba(0, 0, 0, 0);
             cursor: pointer;
         }
-        /* Zona Interactiva: Botón Enviar Correo (Derecha) */
-        .email-overlay {
+        /* Zona Interactiva: Botón Redirección Oficial (Derecha) */
+        .official-overlay {
             position: absolute;
             right: 15%;
             bottom: 4%;
             width: 33%;
             height: 6%;
-            background: rgba(0, 0, 0, 0); /* Totalmente transparente */
+            background: rgba(0, 0, 0, 0);
             cursor: pointer;
+        }
+        /* Botón adicional para Descargar PDF nativo */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0d6efd; /* Azul Boletea */
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 15px;
+            box-sizing: border-box;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -62,18 +86,50 @@
 
 <div class="container">
 
-    <div class="ticket-wrapper">
-        <!-- Nueva Imagen del boleto -->
-        <img src="https://i.ibb.co/5gp9K43C/VIP-11-20260703-145250-0000.png" alt="Boleto Palenque Gomez Palacio" class="ticket-img">
+    <!-- Bloque que se convertirá a PDF -->
+    <div class="ticket-wrapper" id="ticket-pdf-area">
+        <!-- Imagen del boleto con optimización de bordes -->
+        <img src="https://i.ibb.co/5gp9K43C/VIP-11-20260703-145250-0000.png" alt="Boleto Palenque Gomez Palacio" class="ticket-img" crossOrigin="anonymous">
         
-        <!-- Nuevo Enlace sobre el botón de Wallet -->
-        <a href="https://pay.google.com/gp/v/save/eyJhbGciOiJSUzI1NiIsImtpZCI6IjJkMTM0ODhjYzllZDZiNzI3MjNmZTk5Mjg1MjJmOWUxMjYwMWU0MDIiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJnb29nbGUiLCJpYXQiOjE3ODMxMTIyMDYsImlzcyI6IndhbGxldC1wYXNzZXMtc2hhcmluZ0BzeXN0ZW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInR5cCI6InNhdmV0b2dvb2dsZXBheSIsInBheWxvYWQiOnsiZXZlbnRUaWNrZXRPYmplY3RzIjpbeyJjbGFzc0lkIjoiMzM1MzEwNjU0ODcwNzczNzQ0MS52NWU2MGNhNTVhM2ZhMzQ4NWFmYmE0ZTBlYmY2MDNmZDQ5MmU2YzEwM25qdHQ2N3pkMWZiaXM2dm51dDEiLCJpZCI6IjMzNTMxMDY1NDg3MDc3Mzc0NDEuZTZlMTZmMmI1ZDFlN2MxZjc5MGFhMmJkYTcxNjQwZmNjYjFhNTY0Y2V4dHpnajgzNHc2cXJ3eHVkcm41In1dfX0.hXHchu9KPmxxV5ol4bwVnHRMzsYy8lc5f6198dlhObC6oLX81vK1mne2Dl3CeEWKlahhmQw_hxlYpoJBbH_g3G8hPQIVyVJ0mbJjdiE6pVjK6jZ6LvRTdfMqqPWYyZPNuGnzh-H3EheVHtI5Vh6LTWzi1nkkjWeHVPy1mTloMfShwuhWqbX4Pu6h7UJlhxKWYkEdoOgN41es7exy8aMk2jYvzQJGv_cL1FmLLLUy5pSJxLRYkTZXN75so07GZeKrVXlc-RliI_N2GeYVb8ZnhPiyCrcfj7sJqHcVz0u8dKBc7arQ6jb7EmzdWteLsqcJvVjEdXLnJoAJhJBrUcBjbw" target="_blank" class="wallet-overlay" title="Agregar a tu Wallet"></a>
+        <!-- Enlace de Wallet -->
+        <a href="https://pay.google.com/gp/v/save/eyJhbGciOiJSUzI1NiIsImtpZCI6IjJkMTM0ODhjYzllZDZiNzI3MjNmZTk5Mjg1MjJmOWUxMjYwMWU0MDIiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJnb29nbGUiLCJpYXQiOjE3ODMxMTI4NzcsImlzcyI6IndhbGxldC1wYXNzZXMtc2hhcmluZ0BzeXN0ZW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInR5cCI6InNhdmV0b2dvb2dsZXBheSIsInBheWxvYWQiOnsiZXZlbnRUaWNrZXRPYmplY3RzIjpbeyJjbGFzc0lkIjoiMzM1MzEwNjU0ODcwNzczNzQ0MS42NWU2MGNhNTVhM2ZhMzQ4NWFmYmE0ZTBlYmY2MDNmZDQ5MmU2YzEwM25qdHQ2N3pkMWZiaXM2dm51dDEiLCJpZCI6IjMzNTMxMDY1NDg3MDc3Mzc0NDEuZTZlMTZmMmI1ZDFlN2MxZjc5MGFhMmJkYTcxNjQwZmNjYjFhNTY0Y2V4dHpnajgzNHc2cXJ3eHVkcm41In1dfX0.PiAUPKJ3IOOWM-Jv8S-Tn9yTJgt8zGPnHi4rfSIEeYhYSO7jvSwEy54R0OKtDX3_RRzhiC1Wk9oM_AzwNHNiUA2nOjyK13kAMarrBUDyXyRWJA0pz8PQP_Um52UrDD7FKJo911XPzW6XeFGt6wYtwxojDdmzpsQR1bvWWBXeumRaIs-jedcm8KPN5K7OUVThw9xBBa9ea29iMNlMYPyQCAXXOWOHR5dc8IRUq0Jpc55zXE0IKL8ADbmF8YODBYS9SUOUbJVDVdP7-XEXzWh7hFSw9sE3Rq1KLWLbXbhIS9PUs8QfH0NSECR2L1d-QpTgdKD4l1P24woVxW7Lr7mw5g" target="_blank" class="wallet-overlay" title="Agregar a tu Wallet"></a>
         
-        <!-- Enlace sobre el botón Enviar Boleto(s) (Destinatario en blanco con nueva imagen) -->
-        <a href="mailto:?subject=Envio%20de%20Boleto%20-%20Palenque%20Gomez%20Palacio&body=Hola,%20aqui%20tienes%20el%20enlace%20de%20tu%20boleto:%20https://i.ibb.co/5gp9K43C/VIP-11-20260703-145250-0000.png" class="email-overlay" title="Enviar boleto por Correo"></a>
+        <!-- CORREGIDO: Ahora redirige a la página oficial de BOLETEA -->
+        <a href="https://www.boletea.com/" target="_blank" class="official-overlay" id="btn-enviar-boleto" title="Ir a Boletea Oficial"></a>
     </div>
 
+    <!-- Botón dedicado exclusivamente para descargar el PDF -->
+    <button class="download-btn" onclick="descargarBoletoPDF()">
+        📥 Descargar Boleto en PDF
+    </button>
+
 </div>
+
+<script>
+    function descargarBoletoPDF() {
+        const elemento = document.getElementById('ticket-pdf-area');
+        
+        // Configuración para forzar máxima nitidez en el PDF resultante
+        const opciones = {
+            margin: 0,
+            filename: 'Boleto_Palenque_Gomez_Palacio.pdf',
+            image: { type: 'jpeg', quality: 1.0 }, // Calidad máxima
+            html2canvas: { 
+                scale: 3, // Multiplica la resolución por 3 para evitar pixeles borrosos
+                useCORS: true,
+                logging: false
+            },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opciones).from(elemento).save();
+    }
+
+    // Vincula la descarga automática también al presionar sobre "Enviar Boleto"
+    document.getElementById('btn-enviar-boleto').addEventListener('click', () => {
+        setTimeout(descargarBoletoPDF, 500);
+    });
+</script>
 
 </body>
 </html>
