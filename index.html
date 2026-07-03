@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Boleto - Palenque Gómez Palacio</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px 10px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        /* Contenedor del Boleto */
+        .ticket-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            background: #fff;
+            overflow: hidden;
+        }
+        .ticket-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        /* Zona Interactiva: Botón Wallet (Izquierda) */
+        .wallet-overlay {
+            position: absolute;
+            left: 15%;
+            bottom: 4%;
+            width: 33%;
+            height: 6%;
+            background: rgba(0, 0, 0, 0); /* Totalmente transparente */
+            cursor: pointer;
+        }
+        /* Zona Interactiva: Botón Enviar Correo (Derecha) */
+        .email-overlay {
+            position: absolute;
+            right: 15%;
+            bottom: 4%;
+            width: 33%;
+            height: 6%;
+            background: rgba(0, 0, 0, 0); /* Totalmente transparente */
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="ticket-wrapper">
+        <!-- Nueva Imagen del boleto -->
+        <img src="https://i.ibb.co/5gp9K43C/VIP-11-20260703-145250-0000.png" alt="Boleto Palenque Gomez Palacio" class="ticket-img">
+        
+        <!-- Nuevo Enlace sobre el botón de Wallet -->
+        <a href="https://pay.google.com/gp/v/save/eyJhbGciOiJSUzI1NiIsImtpZCI6IjJkMTM0ODhjYzllZDZiNzI3MjNmZTk5Mjg1MjJmOWUxMjYwMWU0MDIiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJnb29nbGUiLCJpYXQiOjE3ODMxMTIyMDYsImlzcyI6IndhbGxldC1wYXNzZXMtc2hhcmluZ0BzeXN0ZW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInR5cCI6InNhdmV0b2dvb2dsZXBheSIsInBheWxvYWQiOnsiZXZlbnRUaWNrZXRPYmplY3RzIjpbeyJjbGFzc0lkIjoiMzM1MzEwNjU0ODcwNzczNzQ0MS52NWU2MGNhNTVhM2ZhMzQ4NWFmYmE0ZTBlYmY2MDNmZDQ5MmU2YzEwM25qdHQ2N3pkMWZiaXM2dm51dDEiLCJpZCI6IjMzNTMxMDY1NDg3MDc3Mzc0NDEuZTZlMTZmMmI1ZDFlN2MxZjc5MGFhMmJkYTcxNjQwZmNjYjFhNTY0Y2V4dHpnajgzNHc2cXJ3eHVkcm41In1dfX0.hXHchu9KPmxxV5ol4bwVnHRMzsYy8lc5f6198dlhObC6oLX81vK1mne2Dl3CeEWKlahhmQw_hxlYpoJBbH_g3G8hPQIVyVJ0mbJjdiE6pVjK6jZ6LvRTdfMqqPWYyZPNuGnzh-H3EheVHtI5Vh6LTWzi1nkkjWeHVPy1mTloMfShwuhWqbX4Pu6h7UJlhxKWYkEdoOgN41es7exy8aMk2jYvzQJGv_cL1FmLLLUy5pSJxLRYkTZXN75so07GZeKrVXlc-RliI_N2GeYVb8ZnhPiyCrcfj7sJqHcVz0u8dKBc7arQ6jb7EmzdWteLsqcJvVjEdXLnJoAJhJBrUcBjbw" target="_blank" class="wallet-overlay" title="Agregar a tu Wallet"></a>
+        
+        <!-- Enlace sobre el botón Enviar Boleto(s) (Destinatario en blanco con nueva imagen) -->
+        <a href="mailto:?subject=Envio%20de%20Boleto%20-%20Palenque%20Gomez%20Palacio&body=Hola,%20aqui%20tienes%20el%20enlace%20de%20tu%20boleto:%20https://i.ibb.co/5gp9K43C/VIP-11-20260703-145250-0000.png" class="email-overlay" title="Enviar boleto por Correo"></a>
+    </div>
+
+</div>
+
+</body>
+</html>
